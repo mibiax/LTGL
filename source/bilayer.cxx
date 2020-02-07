@@ -48,6 +48,19 @@ double bilayer::RRR(){
 	return out;
 };
 
+TH1D* bilayer::hRRR() {
+  TH1D* out = new TH1D("RRR","RRR",12,1,4);
+  //double rrr
+  for (int i=0; i<n; i++){  
+    if (R1[i]==0 || R2[i]==0) continue; 
+    if (isnan(R1[i]) || isnan(R2[i])) continue;
+    double r = R1[i]/R2[i]; 
+    cout<<"test RRR -> "<<r<<endl;
+    out->Fill(r);
+  };
+  return out;
+};
+
 double bilayer::RRRe(){ 
 	int m3=0;
 	double rrr = RRR();
@@ -78,12 +91,12 @@ TF2* bilayer::fitRT(){
   	j++; 
   };
 
-  TF2* out = new TF2("res1","[0]*[1]/([1]*x+[0]*y)",0,1e-6,0,1e-6);
+  TF2* out = new TF2("res1","[0]*[1]/([1]*x+[0]*y)",0,300,0,100);
 
-  out->SetParLimits(0,0,1e9);
-  out->SetParLimits(1,0,1e9);
-  out->SetParameter(0,1e5);
-  out->SetParameter(1,1e5);
+  out->SetParLimits(0,rhoIr*mnm,100*rhoIr*mnm);
+  out->SetParLimits(1,rhoAu*mnm,100*rhoAu*mnm);
+  out->SetParameter(0,rhoIr*mnm);
+  out->SetParameter(1,rhoAu*mnm);
   out->SetParName(0, "Ir");
   out->SetParName(1,"Au");
 
@@ -106,12 +119,12 @@ TF2* bilayer::fitLT(){
   	j++; 
   };
 
-  TF2* out = new TF2("res2","[0]*[1]/([1]*x+[0]*y)",0,1e-6,0,1e-6);
+  TF2* out = new TF2("res2","[0]*[1]/([1]*x+[0]*y)",0,300,0,100);
 
-  out->SetParLimits(0,0,1e9);
-  out->SetParLimits(1,0,1e9);
-  out->SetParameter(0,1e5);
-  out->SetParameter(1,1e5);
+  out->SetParLimits(0,rhoIr*mnm/10,10*rhoIr*mnm);
+  out->SetParLimits(1,rhoAu*mnm/10,10*rhoAu*mnm);
+  out->SetParameter(0,rhoIr*mnm);
+  out->SetParameter(1,rhoAu*mnm);
   out->SetParName(0, "Ir");
   out->SetParName(1,"Au");
 
@@ -120,6 +133,20 @@ TF2* bilayer::fitLT(){
 
   return out;
 
+};
+
+TF1* bilayer::fitTc(){
+  TF1* out = new TF1("tc","pol1",0,180);
+  //out->SetParLimits(0,0,160);
+  //out->SetParLimits(1,0,160);
+  //out->SetParLimits(2,0,160);
+  //out->SetParameter(0, 80);
+  //out->SetParameter(1,0);
+  //out->SetParameter(2, 10);
+  TGraph* plot = plotTc();
+  plot->Fit(out);
+  delete plot;
+  return out;
 };
 
 TGraph2D* bilayer::plotRT(){
@@ -176,24 +203,26 @@ TGraph2D* bilayer::plotTc2D(){
   return out;
 }
 
+
 TGraph* bilayer::plotTc(){
   double x[mtc], y[mtc];
   int j=0;
   for (int i=0; i<n; i++){
     if (Tc[i]==0||Au[i]==0) continue;
-    x[j] = Ir[i]/Au[i];
-    y[j] = Tc[i];
+    y[j] = Ir[i]/Au[i];
+    x[j] = Tc[i];
     j++; 
   };
 
   TGraph* out = new TGraph(j, x, y);
   out->SetMarkerStyle(20);
   out->SetMarkerSize(1);
-  out->SetTitle("Tc; Ir/Au ratio; (mK)");
+  out->SetTitle("Tc; Tc (mK); Ir/Au ratio");
 
   return out;
 
-}
+};
+
 
 bilayer::~bilayer(){
 	delete[] Ir;

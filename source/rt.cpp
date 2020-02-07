@@ -19,6 +19,7 @@ int main(int argn, char** argv){
   int opt;
 
   string path;
+  string arg0(argv[0]);
 
   switch (argn){
   	default:
@@ -46,10 +47,10 @@ int main(int argn, char** argv){
   	case 2: goto singolo;
     case 1: ;
     case 0:
-      cout<<"rt [opt] <filename>"<<endl
+      cout<<arg0<<" [opt] <filename>"<<endl
       <<endl<<" Optinos:"<<endl
       <<"\t-r Plot raw data R vs. R termometer\n"
-      <<"\t-e Plot with rror bars\n"
+      <<"\t-e Plot with error bars\n"
       <<"\t-d Plot all *.dat file in a directory\n"
       <<"\t-f Fit transition (only mK version)\n"
       <<"\t-y Resistance offset subtraction\n"
