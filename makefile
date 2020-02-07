@@ -6,8 +6,17 @@ inc = ./include
 src = ./source
 obj = ./obj
 
-END: rt pulse ppsys bilayer
+END: rt pulse ppsys bilayer iv avp avgsys
 	@echo OK done!
+
+avp: $(src)/AVP.cpp libLTG.a libBASE.a
+	$(CXX) -o $@ $< -I $(inc) -L ./ $(lib) $(root)
+
+avgsys: $(src)/avgsys.cpp libLTG.a
+	$(CXX) -o $@ $< -I $(inc) -L ./ $(lib) $(root)
+
+iv: $(src)/iv.cpp libLTG.a libBASE.a
+	$(CXX) -o $@ $< -I $(inc) -L ./ $(lib) $(root)
 
 ppsys: $(src)/ppsys.cpp libLTG.a libBASE.a
 	$(CXX) -o $@ $< -I $(inc) -L ./ $(lib) $(root)
